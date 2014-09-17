@@ -14,22 +14,23 @@
 
 CG_INLINE CATransform3D
 CATransform3DMake(CGFloat m11, CGFloat m12, CGFloat m13, CGFloat m14,
-				  CGFloat m21, CGFloat m22, CGFloat m23, CGFloat m24,
-				  CGFloat m31, CGFloat m32, CGFloat m33, CGFloat m34,
-				  CGFloat m41, CGFloat m42, CGFloat m43, CGFloat m44)
+                  CGFloat m21, CGFloat m22, CGFloat m23, CGFloat m24,
+                  CGFloat m31, CGFloat m32, CGFloat m33, CGFloat m34,
+                  CGFloat m41, CGFloat m42, CGFloat m43, CGFloat m44)
 {
-	CATransform3D t;
-	t.m11 = m11; t.m12 = m12; t.m13 = m13; t.m14 = m14;
-	t.m21 = m21; t.m22 = m22; t.m23 = m23; t.m24 = m24;
-	t.m31 = m31; t.m32 = m32; t.m33 = m33; t.m34 = m34;
-	t.m41 = m41; t.m42 = m42; t.m43 = m43; t.m44 = m44;
-	return t;
+    CATransform3D t;
+    t.m11 = m11; t.m12 = m12; t.m13 = m13; t.m14 = m14;
+    t.m21 = m21; t.m22 = m22; t.m23 = m23; t.m24 = m24;
+    t.m31 = m31; t.m32 = m32; t.m33 = m33; t.m34 = m34;
+    t.m41 = m41; t.m42 = m42; t.m43 = m43; t.m44 = m44;
+    return t;
 }
 
 @interface AFPopupView ()
 
 @property (nonatomic, strong) UIView *modalView;
 @property (nonatomic, strong) UIView *blackView;
+@property (nonatomic, strong) UIView *tapGestureView;
 @property (nonatomic, strong) UIView *backgroundShadowView;
 @property (nonatomic, strong) UIImageView *renderImage;
 
@@ -47,9 +48,12 @@ CATransform3DMake(CGFloat m11, CGFloat m12, CGFloat m13, CGFloat m14,
         rect = CGRectMake(0, 0, rootView.frame.size.height, rootView.frame.size.width);
     }
     
+    popupView.frame = (CGRect){0,[[UIScreen mainScreen]bounds].size.height-popupView.frame.size.height - 50, [UIScreen mainScreen].bounds.size.width, popupView.frame.size.height};
+    
+    
     AFPopupView *view = [[AFPopupView alloc] initWithFrame:rect];
     
-    view.modalView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, [[UIScreen mainScreen]bounds].size.width, [[UIScreen mainScreen]bounds].size.height - (50 * 2))];
+    view.modalView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, [[UIScreen mainScreen]bounds].size.width, [[UIScreen mainScreen]bounds].size.height - (50 * 1))];
     view.modalView.backgroundColor = [UIColor clearColor];
     view.modalView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleHeight |
     UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin |
@@ -68,14 +72,15 @@ CATransform3DMake(CGFloat m11, CGFloat m12, CGFloat m13, CGFloat m14,
     view.renderImage.autoresizingMask = view.modalView.autoresizingMask;
     view.renderImage.contentMode = UIViewContentModeScaleToFill;
     
+    view.tapGestureView = [[UIView alloc] initWithFrame:(CGRect){0,0,view.frame.size.width, view.frame.size.height - popupView.frame.size.height}];
+    view.tapGestureView.backgroundColor = [UIColor clearColor];
+    
     [view.modalView addSubview:popupView];
     [view addSubview:view.blackView];
     [view addSubview:view.renderImage];
     [view addSubview:view.backgroundShadowView];
     [view addSubview:view.modalView];
-    
-    UITapGestureRecognizer *hideGesture = [[UITapGestureRecognizer alloc] initWithTarget:view action:@selector(hideByTap)];
-    [view.backgroundShadowView addGestureRecognizer:hideGesture];
+    [view addSubview:view.tapGestureView];
     
     return view;
 }
@@ -97,6 +102,10 @@ CATransform3DMake(CGFloat m11, CGFloat m12, CGFloat m13, CGFloat m14,
     [rootView addSubview:self];
     _modalView.center = CGPointMake(self.frame.size.width/2.0, _modalView.frame.size.height * 1.5);
     
+    UITapGestureRecognizer *tgr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hide)];
+    [self.tapGestureView addGestureRecognizer:tgr];
+    
+    
     [UIView animateWithDuration:0.2
                           delay:0
                         options:UIViewAnimationOptionCurveEaseInOut
@@ -110,8 +119,8 @@ CATransform3DMake(CGFloat m11, CGFloat m12, CGFloat m13, CGFloat m14,
                          
                          [UIView animateWithDuration:0.2 animations:^{
                              
-                             float newWidht = _renderImage.frame.size.width * 0.7;
-                             float newHeight = _renderImage.frame.size.height * 0.7;
+                             float newWidht = _renderImage.frame.size.width * 0.70;
+                             float newHeight = _renderImage.frame.size.height * 0.70;
                              _renderImage.frame = CGRectMake(([[UIScreen mainScreen]bounds].size.width - newWidht) / 2, 22, newWidht, newHeight);
                              _renderImage.layer.transform = CATransform3DMakePerspective(0, 0);
                          } completion:^(BOOL finished) {
@@ -128,7 +137,7 @@ CATransform3DMake(CGFloat m11, CGFloat m12, CGFloat m13, CGFloat m14,
                      completion:^(BOOL finished) {
                          
                      }];
-
+    
 }
 
 -(void)hide {
@@ -149,11 +158,11 @@ CATransform3DMake(CGFloat m11, CGFloat m12, CGFloat m13, CGFloat m14,
                      animations:^{
                          
                          _backgroundShadowView.alpha = 0.0;
-                         _renderImage.layer.transform = CATransform3DMakePerspective(0, -0.0007);
+                         _renderImage.layer.transform = CATransform3DMakePerspective(0, -0.00070);
                      }
      
                      completion:^(BOOL finished) {
-
+                         
                          [UIView animateWithDuration:0.2 animations:^{
                              
                              _renderImage.frame = [[UIScreen mainScreen]bounds];
@@ -162,12 +171,6 @@ CATransform3DMake(CGFloat m11, CGFloat m12, CGFloat m13, CGFloat m14,
                              [self removeFromSuperview];
                          }];
                      }];
-}
-
--(void)hideByTap {
-    if (_hideOnBackgroundTap) {
-        [self hide];
-    }
 }
 
 -(UIImage *)imageWithView:(UIView *)view {
@@ -181,5 +184,6 @@ CATransform3DMake(CGFloat m11, CGFloat m12, CGFloat m13, CGFloat m14,
     
     return backgroundImage;
 }
+
 
 @end
