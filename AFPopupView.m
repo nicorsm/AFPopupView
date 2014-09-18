@@ -48,12 +48,12 @@ CATransform3DMake(CGFloat m11, CGFloat m12, CGFloat m13, CGFloat m14,
         rect = CGRectMake(0, 0, rootView.frame.size.height, rootView.frame.size.width);
     }
     
-    popupView.frame = (CGRect){0,[[UIScreen mainScreen]bounds].size.height-popupView.frame.size.height - 50, [UIScreen mainScreen].bounds.size.width, popupView.frame.size.height};
+    popupView.frame = (CGRect){0,[[UIScreen mainScreen]bounds].size.height-popupView.frame.size.height, [UIScreen mainScreen].bounds.size.width, popupView.frame.size.height};
     
     
     AFPopupView *view = [[AFPopupView alloc] initWithFrame:rect];
     
-    view.modalView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, [[UIScreen mainScreen]bounds].size.width, [[UIScreen mainScreen]bounds].size.height - (50 * 1))];
+    view.modalView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, [[UIScreen mainScreen]bounds].size.width, [[UIScreen mainScreen]bounds].size.height )];
     view.modalView.backgroundColor = [UIColor clearColor];
     view.modalView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleHeight |
     UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin |
